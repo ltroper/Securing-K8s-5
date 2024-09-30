@@ -62,29 +62,31 @@ To demonstrate Gatekeeper in action, we’ll create a policy to ensure that all 
 ### Define the Constraint Template
 
 1. **Create a constraint template** (`k8srequiredlabels-template.yaml`):
+
     ```yaml
     apiVersion: templates.gatekeeper.sh/v1beta1
-kind: ConstraintTemplate
-metadata:
-  name: k8srequiredlabels
-spec:
-  crd:
+    kind: ConstraintTemplate
+    metadata:
+      name: k8srequiredlabels
     spec:
-      names:
-        kind: K8sRequiredLabels
-  targets:
-    - target: admission.k8s.gatekeeper.sh
-      rego: |
-        package k8srequiredlabels
-        violation[{"msg": msg}] {
-          required := {"app", "team"}
-          provided := {label | input.review.object.metadata.labels[label]}
-          missing := required - provided
-          count(missing) > 0
-          msg := sprintf("Missing required labels: %v", [missing])
-        }
-
+      crd:
+        spec:
+          names:
+            kind: K8sRequiredLabels
+      targets:
+        - target: admission.k8s.gatekeeper.sh
+          rego: |
+            package k8srequiredlabels
+            violation[{"msg": msg}] {
+              required := {"app", "team"}
+              provided := {label | input.review.object.metadata.labels[label]}
+              missing := required - provided
+              count(missing) > 0
+              msg := sprintf("Missing required labels: %v", [missing])
+            }
     ```
+
+This should render properly when pasted into GitHub. Let me know if you need further adjustments!
 
 2. **Apply the template**:
     ```bash
