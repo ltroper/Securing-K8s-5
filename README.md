@@ -197,6 +197,7 @@ OPA Gatekeeper’s flexibility allows for various security and operational gover
 - **Resource Management**: Enforcing CPU and memory limits for all Pods.
 - **Compliance**: Enforcing regulatory or organizational policies across namespaces or clusters.
 
+For example, you can enforce a policy that ensures no Pod is deployed without resource limits:
 
 1. **Create a constraint template** for resource limits (`k8srequiredlimits-template.yaml`):
 
