@@ -197,8 +197,9 @@ OPA Gatekeeper’s flexibility allows for various security and operational gover
 - **Resource Management**: Enforcing CPU and memory limits for all Pods.
 - **Compliance**: Enforcing regulatory or organizational policies across namespaces or clusters.
 
-For example, you can enforce a policy that ensures no Pod is deployed without resource limits:
-1. Create a **constraint template** for resource limits:
+
+1. **Create a constraint template** for resource limits (`k8srequiredlimits-template.yaml`):
+
     ```yaml
     apiVersion: templates.gatekeeper.sh/v1beta1
     kind: ConstraintTemplate
@@ -211,16 +212,17 @@ For example, you can enforce a policy that ensures no Pod is deployed without re
             kind: K8sRequiredLimits
       targets:
         - target: admission.k8s.gatekeeper.sh
-      rego: |
-        package k8srequiredlimits
-        violation[{"msg": msg}] {
-          input.review.kind.kind == "Pod"
-          container := input.review.object.spec.containers[_]
-          not container.resources.limits.cpu
-          not container.resources.limits.memory
-          msg := "Pod must have CPU and memory limits set"
-        }
+          rego: |
+            package k8srequiredlimits
+            violation[{"msg": msg}] {
+              input.review.kind.kind == "Pod"
+              container := input.review.object.spec.containers[_]
+              not container.resources.limits.cpu
+              not container.resources.limits.memory
+              msg := "Pod must have CPU and memory limits set"
+            }
     ```
+
 
 2. **Create the corresponding constraint**:
     ```yaml
